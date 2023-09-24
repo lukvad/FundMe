@@ -1,13 +1,13 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
-require("./tasks/block-number")
-require("./tasks/accounts")
 require("hardhat-gas-reporter");
 require("solidity-coverage")
-require("@nomiclabs/hardhat-waffle")
+require("hardhat-deploy")
+require("hardhat-contract-sizer")
 
 
 const SEP_RPC_URL = process.env.SEP_RPC_URL;
+const POL_RPC_URL = process.env.POL_RPC_URL;
 const LOC_RPC_URL = process.env.LOC_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const LOC_PVT_KEY = process.env.LOC_PVT_KEY;
@@ -19,7 +19,11 @@ const COINMKT_API_KEY = process.env.COINMKT_API_KEY;
 
 
 module.exports = {
-  solidity: "0.8.19",
+  solidity: {
+    compilers: [
+      {version: "0.8.8"},{version:"0.6.6"}
+    ]
+  },
   defaultNetwork: "hardhat",
   networks:{
     local:{
@@ -30,6 +34,11 @@ module.exports = {
       url: SEP_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 11155111,
+    },
+    polygon: {
+      url: POL_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 137,
     }
   },
   etherscan:{
@@ -41,6 +50,14 @@ module.exports = {
     noColors: true,
     currency: "USD",
     coinmarketcap: COINMKT_API_KEY,
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    user: {
+      default: 1,
+    }
   }
 };
 

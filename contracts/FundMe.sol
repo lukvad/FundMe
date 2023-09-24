@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.8;
 import "./PriceConverter.sol";
 //681685
 error NotOwner();
@@ -10,12 +10,15 @@ contract FundMe {
     mapping (address => uint256) public addressToAmount;
     address public immutable i_owner;
 
-    constructor(){
+    AggregatorV3Interface public priceFeed;
+
+    constructor(address priceFeedAddress){
+        priceFeed = AggregatorV3Interface(priceFeedAddress);
         i_owner = msg.sender;
     }
 
     function fund() public payable {
-        require(msg.value.getConversionRate() >= MINIMUM_USD, "Didn't send enough");
+        require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "Didn't send enough");
         funders.push(msg.sender);
         addressToAmount[msg.sender] = msg.value;
     }
