@@ -1,10 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.8;
+
+//Imports
 import "./PriceConverter.sol";
-//681685
-error NotOwner();
+
+//Errors
+error FundMe__NotOwner();
+
+/**
+ * @title A contract for crowdfunding
+ * @author Alior
+ * @notice This is only for training purposes
+ * @dev This is implementing hardhat library
+ */
 contract FundMe {
+    //Type declarations
     using PriceConverter for uint256;
+    //State Variables
     uint256 public constant MINIMUM_USD = 5 * 1e18;
     address[] public funders;
     mapping (address => uint256) public addressToAmount;
@@ -12,11 +24,27 @@ contract FundMe {
 
     AggregatorV3Interface public priceFeed;
 
+    //Modifier restricting function for the owner of contract
+    modifier onlyOwner {
+        // require(msg.sender == i_owner, "You are not allowed");
+        if(msg.sender != i_owner){revert FundMe__NotOwner();}
+        _;
+    }
+
     constructor(address priceFeedAddress){
         priceFeed = AggregatorV3Interface(priceFeedAddress);
         i_owner = msg.sender;
     }
 
+    receive () external payable {
+        fund();
+    }
+    fallback () external payable {
+        fund();
+    } 
+    /**
+     * @notice This function funds the contract
+     */
     function fund() public payable {
         require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "Didn't send enough");
         funders.push(msg.sender);
@@ -35,17 +63,7 @@ contract FundMe {
         require(callSuccess, "Transfer failed");
 
     }
-    receive () external payable {
-        fund();
+    function getPriceFeed() public view returns (AggregatorV3Interface) {
+        return priceFeed;
     }
-    fallback () external payable {
-        fund();
-    }
-
-    modifier onlyOwner {
-        // require(msg.sender == i_owner, "You are not allowed");
-        if(msg.sender != i_owner){revert NotOwner();}
-        _;
-    }
-
 }

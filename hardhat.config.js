@@ -1,17 +1,19 @@
-require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
-require("hardhat-gas-reporter");
+require("@nomiclabs/hardhat-waffle")
+// require("@nomiclabs/ethereum-waffle")
+require("hardhat-gas-reporter")
+require("@nomiclabs/hardhat-etherscan")
+require("dotenv").config()
 require("solidity-coverage")
 require("hardhat-deploy")
-require("hardhat-contract-sizer")
+
 
 
 const SEP_RPC_URL = process.env.SEP_RPC_URL;
 const POL_RPC_URL = process.env.POL_RPC_URL;
 const LOC_RPC_URL = process.env.LOC_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const LOC_PVT_KEY = process.env.LOC_PVT_KEY;
 const ETHSCAN_API_KEY = process.env.ETHSCAN_API_KEY;
+const POLSCAN_API_KEY = process.env.POLSCAN_API_KEY;
 const COINMKT_API_KEY = process.env.COINMKT_API_KEY;
 /** @type import('hardhat/config').HardhatUserConfig */
 
@@ -34,6 +36,7 @@ module.exports = {
       url: SEP_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 11155111,
+      blockConfirmations: 6, 
     },
     polygon: {
       url: POL_RPC_URL,
@@ -42,7 +45,11 @@ module.exports = {
     }
   },
   etherscan:{
-    apiKey:ETHSCAN_API_KEY,
+    apiKey:{
+      mainnet: ETHSCAN_API_KEY,
+      sepolia: ETHSCAN_API_KEY,
+      polygon: POLSCAN_API_KEY,
+    }
   },
   gasReporter: {
     enabled:true,
