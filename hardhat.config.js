@@ -55,8 +55,8 @@ module.exports = {
     enabled:true,
     outputFile: "gas-report.txt",
     noColors: true,
-    currency: "USD",
-    coinmarketcap: COINMKT_API_KEY,
+    // currency: "USD",
+    // coinmarketcap: COINMKT_API_KEY,
   },
   namedAccounts: {
     deployer: {

@@ -3,6 +3,7 @@ pragma solidity 0.8.8;
 
 //Imports
 import "./PriceConverter.sol";
+import "hardhat/console.sol";
 
 //Errors
 error FundMe__NotOwner();
@@ -27,7 +28,10 @@ contract FundMe {
     //Modifier restricting function for the owner of contract
     modifier onlyOwner {
         // require(msg.sender == i_owner, "You are not allowed");
-        if(msg.sender != i_owner){revert FundMe__NotOwner();}
+        if(msg.sender != i_owner){
+            
+            revert FundMe__NotOwner();
+        }
         _;
     }
 
@@ -49,10 +53,12 @@ contract FundMe {
         require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "Didn't send enough");
         funders.push(msg.sender);
         addressToAmount[msg.sender] = msg.value;
+        // console.log("Recieved", msg.value);
     }
     function withdraw() onlyOwner public {
-        for(uint f=0;f<funders.length;f++) {
-            address funder = funders[f];
+        address[] memory m_funders = funders;
+        for(uint f=0;f<m_funders.length;f++) {
+            address funder = m_funders[f];
             addressToAmount[funder] = 0;
         }
         funders = new address[](0);
