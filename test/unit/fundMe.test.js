@@ -17,7 +17,7 @@ describe("FundMe", async()=>{
     })
     describe("constructor", async()=>{
         it("sets the aggregator addresses corretly", async()=>{
-            const response = await fundMe.priceFeed()
+            const response = await fundMe.getPriceFeed()
             assert.equal(response, mockV3Aggregator.target)
         })
 
@@ -30,18 +30,18 @@ describe("FundMe", async()=>{
             }catch(error){
                 e=error
             }
-            assert.include(e.toString(),"Didn't send enough")
+            assert.include(e.toString(),"Sent_NotEnough()")
         })
         it("updates the amount funded data structure", async()=> {
             await fundMe.fund({value: sendValue})
-            const response = await fundMe.addressToAmount(
+            const response = await fundMe.getAddressToAmount(
                 deployer
             )
             assert.equal(sendValue.toString(),response.toString())
         })
         it("adds funder into arrays of funders",async ()=> {
             await fundMe.fund({value: sendValue})
-            const funder = await fundMe.funders(0)
+            const funder = await fundMe.getFunder(0)
             assert.equal(funder, deployer)
         })
     })
@@ -102,14 +102,14 @@ describe("FundMe", async()=>{
             assert.equal((startContractBalance + startDeployerBalance).toString(), (endDeployerBalance + gasCost).toString())
             let e = false;
             try{
-                await fundMe.funders(0)
+                await fundMe.getFunder(0)
             }catch(error){
                 e=error
             }
             assert.isNotEmpty(e)
             for(let i=0;i<6;i++){
                 assert.equal(
-                    await fundMe.addressToAmount(accounts[i].address),
+                    await fundMe.getAddressToAmount(accounts[i].address),
                     0
                 )
             }
